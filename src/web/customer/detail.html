@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>顧客詳細画面</title>
+    <!-- Bootstrap CSSの読み込み -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">顧客詳細</h1>
+        <div id="customer-detail">
+            <!-- 顧客データはここに挿入されます -->
+        </div>
+        <button id="deleteButton" class="btn btn-danger">削除</button>
+        <!-- 顧客情報編集画面へのリンク -->
+        <a href="update.html" class="btn btn-primary" id="editButton">編集</a>
+    </div>
+
+    <script type="module">
+        import config from '../../config.js';
+
+        // キーに対応する日本語の表現を定義
+        const japaneseLabels = {
+            'customer_id': '顧客ID',
+            'company_name': '会社名',
+            'industry': '業種',
+            'contact': '連絡先',
+            'location': '所在地',
+            'created_date': '作成日',
+            'updated_date': '更新日'
+            // カラムが増えたら適宜追加
+        };
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // パラメータからcustomerIdを取得
+            const urlParams = new URLSearchParams(window.location.search);
+            const customerId = urlParams.get('customerId');
+
+            const detailsContainer = document.getElementById("customer-detail");
+            const deleteButton = document.getElementById("deleteButton");
+            const editButton = document.getElementById('editButton');
+
+            if (deleteButton) {
+                deleteButton.addEventListener('click', () => {
+                    console.log('Delete button clicked');
+                    // 「削除していいですか？」の確認
+                    const confirmDelete = window.confirm('顧客を削除してもよろしいですか？');
+                    if (confirmDelete) {
+                        // 削除リクエストの送信
+                        fetch(`${config.apiUrl}/customer/${customerId}`, {
+                            method: 'DELETE',
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`Network response was not ok (${response.statusText})`);
+                            }
+                            // 削除成功時の処理（ここでは一覧画面にリダイレクト）
+                            window.location.href = 'list.html';
+                        })
+                        .catch(error => console.error('Error deleting customer:', error));
+                    }
+                });
+            }
+
+            // 顧客詳細を取得して表示
+            fetch(`${config.apiUrl}/customer/${customerId}`)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok (${response.statusText})`);
+                    }
+                    return response.json();
+                })
+                .then((customer) => {
+                    console.log('Fetched customer:', customer); // 取得した顧客データをコンソールに表示
+
+                    if (detailsContainer === null) {
+                        console.error('Error: detailsContainer is null');
+                    } else {
+                        const detailsList = document.createElement("ul");
+                        detailsList.classList.add("list-group");
+
+                        // 顧客情報の各項目をリストとして作成
+                        const keys = Object.keys(customer);
+                        keys.forEach((key) => {
+                            const listItem = document.createElement("li");
+                            listItem.classList.add("list-group-item");
+                            // キーに対応する日本語のラベルを表示
+                            const japaneseLabel = japaneseLabels[key] || key;
+                            listItem.textContent = `${japaneseLabel}: ${customer[key]}`;
+                            
+                            detailsList.appendChild(listItem);
+                        });
+
+                        detailsContainer.appendChild(detailsList);
+                    }
+                })
+                .catch((error) => console.error('Error fetching customer data:', error));
+
+            // 「編集」ボタンがクリックされたときの処理
+            editButton.addEventListener('click', function() {
+                // 顧客詳細を取得して表示
+                fetch(`${config.apiUrl}/customer/${customerId}`)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(`Network response was not ok (${response.statusText})`);
+                        }
+                        return response.json();
+                    })
+                    .then((customer) => {
+                        console.log('Fetched customer:', customer); // 取得した顧客データをコンソールに表示
+
+                        // 顧客情報をURLパラメータとして追加
+                        const customerDataString = encodeURIComponent(JSON.stringify(customer));
+                        const timestamp = new Date().getTime();
+                        window.location.href = `update.html?customerId=${customerId}&timestamp=${timestamp}&customerData=${customerDataString}`;
+                    })
+                    .catch((error) => console.error('Error fetching customer data:', error));
+            });
+        });
+    </script>
+    <!-- BootstrapのJavaScriptと依存関係のリンク -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

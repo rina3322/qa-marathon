@@ -3,16 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>案件情報入力</title>
+    <title>顧客情報編集画面</title>
     <!-- Bootstrap CSSの読み込み -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container mt-5">
-        <!-- ここにHTMLを書く -->
+        <h1 class="mb-4">顧客情報編集</h1>
+        <div id="edit-customer">
+            <!-- 顧客情報編集フォームはここに挿入されます -->
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="companyName">会社名</label>
+                    <input type="text" class="form-control" id="companyName" name="companyName" required>
+                </div>
+                <div class="form-group">
+                    <label for="industry">業種</label>
+                    <input type="text" class="form-control" id="industry" name="industry" required>
+                </div>
+                <div class="form-group">
+                    <label for="contact">連絡先</label>
+                    <input type="text" class="form-control" id="contact" name="contact" required>
+                </div>
+                <div class="form-group">
+                    <label for="location">所在地</label>
+                    <input type="text" class="form-control" id="location" name="location" required>
+                </div>
+            </form>
+        </div>
+        <button id="updateButton" class="btn btn-primary">変更</button>
     </div>
+
     <script type="module">
-        <!-- ここにJSを書く -->
+        import config from '../../config.js';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // パラメータからcustomerIdとcustomerDataを取得
+            const urlParams = new URLSearchParams(window.location.search);
+            const customerId = urlParams.get('customerId');
+            const customerDataString = urlParams.get('customerData');
+            
+            // customerIdが存在しない場合はエラーメッセージを表示
+            if (!customerId) {
+                console.error('Error: customerId is null');
+                return;
+            }
+
+            const editCustomerContainer = document.getElementById("edit-customer");
+
+            // 顧客情報を取得して表示
+            fetch(`${config.apiUrl}/customer/${customerId}`)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok (${response.statusText})`);
+                    }
+                    return response.json();
+                })
+                .then((customer) => {
+                    // ここでフォームにデータを設定する処理を行う
+                    document.getElementById('companyName').value = customer.company_name;
+                    document.getElementById('industry').value = customer.industry;
+                    document.getElementById('contact').value = customer.contact;
+                    document.getElementById('location').value = customer.location;
+                    
+                    // ログで確認
+                    console.log('Fetched customer:', customer);
+                })
+                .catch((error) => console.error('Error fetching customer data:', error));
+
+            // 変更ボタンのクリックイベント
+            const updateButton = document.getElementById("updateButton");
+            updateButton.addEventListener('click', function() {
+                // フォームデータを取得
+                const formData = new FormData(document.getElementById("editForm"));
+
+                // フォームデータをオブジェクトに変換
+                const editedCustomer = {};
+                formData.forEach((value, key) => {
+                    editedCustomer[key] = value;
+                });
+
+                // 顧客情報の更新リクエストを送信
+                fetch(`${config.apiUrl}/customer/${customerId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(editedCustomer),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok (${response.statusText})`);
+                    }
+                    // 変更成功時の処理
+                    alert('顧客情報が変更されました');
+                    // detail.html に遷移
+                    window.location.href = `detail.html?customerId=${customerId}`;
+
+                })
+                .catch(error => console.error('Error updating customer:', error));
+            });
+        });
     </script>
     <!-- BootstrapのJavaScriptの読み込み -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
