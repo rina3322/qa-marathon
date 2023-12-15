@@ -14,4 +14,5 @@ jobs:
           SSH_PORT: ${{ secrets.DEV_SSH_PORT }}
           SSH_USER: ${{ secrets.DEV_SSH_USER }}
           SSH_KEY: ${{ secrets.DEV_SSHE_SSH_KEY }}
+      - run: ssh-keyscan -H ${{ secrets.DEV_SSH_HOST }} >> ~/.ssh/known_hosts
       - run: ssh ${{ steps.ssh.outputs.SERVER }} bash /app/deploy_test.sh rina_deguchi
