@@ -10,7 +10,7 @@ app.use(cors());
 const { Pool } = require("pg");
 const pool = new Pool({
   user: "user_3322", // PostgreSQLのユーザー名に置き換えてください
-  host: "db",
+  host: "localhost",
   database: "crm_3322", // PostgreSQLのデータベース名に置き換えてください
   password: "pass_3322", // PostgreSQLのパスワードに置き換えてください
   port: 5432,
