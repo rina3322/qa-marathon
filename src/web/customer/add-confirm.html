@@ -48,7 +48,7 @@
         window.addEventListener("DOMContentLoaded", displayFormData);
 
         // 保存ボタンがクリックされたときの処理
-    document.getElementById("saveButton").addEventListener("click", function() {
+        document.getElementById("saveButton").addEventListener("click", function() {
         // 各項目の値を取得
         const companyName = getQueryParam("companyName");
         const industry = getQueryParam("industry");
@@ -57,10 +57,10 @@
 
         // 保存処理
         saveDataToDatabase(companyName, industry, contact, location);
-    });
+        });
 
-    // 保存処理を行う関数
-    function saveDataToDatabase(companyName, industry, contact, location) {
+        // 保存処理を行う関数
+        function saveDataToDatabase(companyName, industry, contact, location) {
         // バックエンドのAPIエンドポイントにデータを送信
         //const apiUrl = 'http://localhost:3322';
         fetch(`${config.apiUrl}/add-customer`, {
@@ -84,8 +84,8 @@
             }
         })
         .catch(error => console.error('Error:', error));
-    }
-</script>
+        }
+    </script>
     <!-- BootstrapのJavaScriptの読み込み -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
