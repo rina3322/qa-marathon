@@ -61,29 +61,29 @@
 
         // 保存処理を行う関数
         function saveDataToDatabase(companyName, industry, contact, location) {
-        // バックエンドのAPIエンドポイントにデータを送信
-        //const apiUrl = 'http://localhost:3322';
-        fetch(`${config.apiUrl}/add-customer`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                companyName: companyName,
-                industry: industry,
-                contact: contact,
-                location: location
+            // バックエンドのAPIエンドポイントにデータを送信
+            //const apiUrl = 'http://localhost:3322';
+            fetch(`${config.apiUrl}/add-customer`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'  // Content-Type を 'application/json' に変更
+                },
+                body: JSON.stringify({
+                    companyName: companyName,
+                    industry: industry,
+                    contact: contact,
+                    location: location
+                })
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success === true) {
-                alert('顧客情報が正常に保存されました。');
-            } else {
-                alert('保存に失敗しました。');
-            }
-        })
-        .catch(error => console.error('Error:', error));
+            .then(response => response.json())
+            .then(data => {
+                if (data.success === true) {
+                    alert('顧客情報が正常に保存されました。');
+                } else {
+                    alert('保存に失敗しました。');
+                }
+            })
+            .catch(error => console.error('Error:', error));
         }
     </script>
     <!-- BootstrapのJavaScriptの読み込み -->
