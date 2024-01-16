@@ -31,10 +31,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: test_staging
     steps:
-      - name: Set up Git
-        run: |
-          git config --global --add safe.directory /app
-
       - name: SSH into Production Server and Deploy
         id: ssh_production
         uses: invi5H/ssh-action@v1
