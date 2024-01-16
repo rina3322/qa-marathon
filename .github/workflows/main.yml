@@ -22,7 +22,7 @@ jobs:
           SSH_KEY: ${{ secrets.DEV_SSHE_SSH_KEY }}
 
       - name: Add Staging Server to Known Hosts
-        run: ssh-keyscan -H ${{ secrets.DEV_SSH_HOST }} >> ~/.ssh/known_hosts
+        run: ssh-keyscan -H ${{ secrets.DEV_SSH_HOST }} >> ~/.ssh/known_hosts #これはいらないかも
 
       - name: Run Tests on Staging
         run: ssh ${{ steps.ssh_staging.outputs.SERVER }} bash /app/deploy.sh rina_deguchi
