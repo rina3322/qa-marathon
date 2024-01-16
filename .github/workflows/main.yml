@@ -24,7 +24,7 @@ jobs:
         run: ssh-keyscan -H ${{ secrets.DEV_SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Run Tests on Staging
-        run: ssh ${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_HOST }} bash /app/deploy.sh rina_deguchi
+        run: ssh ${{ steps.ssh.outputs.SERVER }} bash /app/deploy.sh rina_deguchi
 
   deploy_production:
     runs-on: ubuntu-latest
@@ -42,4 +42,4 @@ jobs:
         run: ssh-keyscan -H ${{ secrets.PRO_SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Run Deployment on Production
-        run: ssh ${{ secrets.PRO_SSH_USER }}@${{ secrets.PRO_SSH_HOST }} bash /app/deploy.sh rina_deguchi
+        run: ssh ${{ steps.ssh.outputs.SERVER }} bash /app/deploy.sh rina_deguchi
