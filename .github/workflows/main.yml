@@ -13,6 +13,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: SSH into Staging Server and Test
+        id: ssh
         uses: invi5H/ssh-action@v1
         with:
           SSH_HOST: ${{ secrets.DEV_SSH_HOST }}
@@ -31,6 +32,7 @@ jobs:
     needs: test_staging
     steps:
       - name: SSH into Production Server and Deploy
+        id: ssh
         uses: invi5H/ssh-action@v1
         with:
           SSH_HOST: ${{ secrets.PRO_SSH_HOST }}
